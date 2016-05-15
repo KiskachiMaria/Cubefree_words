@@ -70,13 +70,34 @@ def genSequens2(alpha, length, optimize):#Строим по случайной �
 	print("Count", count)
 	return len(s)
 
-def genSequens3(alpha, length, optimize):#Удлаялем из случайной последовательности повторяющиеся символы
+def cutCube(k_count, s):
+	k = isCube(s)
+	if k > 0 :
+		s = s[:-k_count*k]
+	return s
 
+def genSequens2KOptimize(alpha, length):#Удлаялем из случайной последовательности повторяющиеся символы, строим как в genSeq
+	counter = 1
+	s = choice(alpha)
+	while len(s) < length :
+		if s[-2:] == "00":
+			while s[-1:] != "1":
+				s += choice(alpha)
+				s = cutCube(2, s)
+		elif s[-2:] == "11":
+			while s[-1:] != "0":
+				s += choice(alpha)
+				s = cutCube(2, s)
+		else:
+			s += choice(alpha)
+			counter += 1
+		s = cutCube(2, s)
+	return counter
 
 alphabet = "01"
 start = time.time()
-for i in range(1000):
-	count = genSequens2(alphabet, 1000, False)
+for i in range(100):
+	count = genSequens2KOptimize(alphabet, 10000)
 	print(count)
 finish = time.time()
 # print(s)
