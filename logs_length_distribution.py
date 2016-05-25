@@ -12,20 +12,27 @@ def build_log(str, log, ch):
 		log += '0' * cube
 		s = s[:-cube]
 	return s, log
+dic = {}
 
 def log_gen(gen_count, str, log):
 	if gen_count == 0:
-		return [log]
+		if len(log) not in dic:
+			dic[len(log)] = 0
+		dic[len(log)] += 1
+		return
 	s0, log0 = build_log(str, log, '0')
 	s1, log1 = build_log(str, log, '1')
-	return log_gen2(gen_count - 1, s0, log0) + log_gen2(gen_count - 1, s1, log1)
+	log_gen(gen_count - 1, s0, log0)
+	log_gen(gen_count - 1, s1, log1)
 
-for j in range(28, 29):
-	dic = {}
-	for i in log_gen(j, "", ""):
+log_gen(31, "", "")
+print(dic)
+#for j in range(28, 29):
+	#dic = {}
+	#for i in log_gen(j, "", ""):
 		# print(i)
-		if len(i) not in dic:
-			dic[len(i)] = 0
-		dic[len(i)] += 1
-	for k in sorted(dic.keys()):
-		print(j, k, dic[k])# sep="\t")
+	#	if len(i) not in dic:
+	#		dic[len(i)] = 0
+	#	dic[len(i)] += 1
+	#for k in sorted(dic.keys()):
+	#	print(j, k, dic[k])# sep="\t")

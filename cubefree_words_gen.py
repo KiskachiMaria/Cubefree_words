@@ -7,11 +7,12 @@ def isCube(s):
 			return i
 	return 0
 
-def genSequens(alpha, length, optimize):#Строим по случайной бесконечной последовательности слово конкретной длины
+def genSequens(alpha, length, optimize):
 	freq = {}
 	str_k = ""
 	counter = 0
 	s = choice(alpha)
+	rand_s = s
 	while len(s) < length :
 		# print(alpha, length, optimize, s)
 		counter += 1
@@ -32,7 +33,9 @@ def genSequens(alpha, length, optimize):#Строим по случайной б
 			if isWork:
 				counter -= 1
 		if not optimize or not isWork:
-			s += choice(alpha)
+			ch = choice(alpha)
+			s += ch
+			rand_s += ch
 		k = isCube(s)
 		if k > 0 :
 			#if k != 1:
@@ -41,12 +44,12 @@ def genSequens(alpha, length, optimize):#Строим по случайной б
 			#	freq[k] = 0
 			#freq[k] += 1
 			#str_k += str(k) + "\t"
-			s = s[:-2*k]#(k+int(k/2))]
+			s = s[:-k]#(k+int(k/2))]
 		#if counter > length*10 :
 		#	break
-	return counter
+	return counter, rand_s
 	
-def genSequens2(alpha, length, optimize):#Строим по случайной последовательности фиксированной длинны бескубное слово.
+def genSequens2(alpha, length, optimize):
 	s = ""
 	i = 0
 	count = 0
@@ -64,10 +67,7 @@ def genSequens2(alpha, length, optimize):#Строим по случайной �
 		if not optimize or not isWork:
 			s += choice(alpha)
 			i += 1
-		k = isCube(s)
-		if k > 0 :
-			s = s[:-2*k]
-	print("Count", count)
+		s = cutCube(1, s)
 	return len(s)
 
 def cutCube(k_count, s):
@@ -76,7 +76,7 @@ def cutCube(k_count, s):
 		s = s[:-k_count*k]
 	return s
 
-def genSequens2KOptimize(alpha, length):#Удлаялем из случайной последовательности повторяющиеся символы, строим как в genSeq
+def genSequens2KOptimize(alpha, length):
 	counter = 1
 	s = choice(alpha)
 	while len(s) < length :
@@ -94,11 +94,27 @@ def genSequens2KOptimize(alpha, length):#Удлаялем из случайно�
 		s = cutCube(2, s)
 	return counter
 
+def randomCountDiffCubeFreeWords(alpha, fromLen, toLen):
+	for k in range(fromLen,toLen):
+		dic = {}
+		f = open('test' + str(k), 'w')
+		for i in range(5000000):
+			(count, s) = genSequens(alpha, k, False)
+			if s not in dic:
+				dic[s] = 0
+			dic[s] += 1
+		print(k, len(dic.keys()))
+		for key in sorted(dic.keys()):
+			f.write(str(key) + "\t" + str(dic[key]) + "\n")
+		f.close()
+
 alphabet = "01"
 start = time.time()
-for i in range(100):
-	count = genSequens2KOptimize(alphabet, 10000)
-	print(count)
+
+randomCountDiffCubeFreeWords(alphabet, 4, 11)
+# for i in range(1000):
+# 	count = genSequens2(alphabet, 10000, False)
+# 	print(count)
 finish = time.time()
 # print(s)
 # print(str(len(s)) + '	' + str(counter) + '	' + str(freq))
